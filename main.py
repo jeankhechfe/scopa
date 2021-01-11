@@ -1,13 +1,8 @@
-# This is Italian Card Game Scopa
 # Scopa rules can be found here https://en.wikipedia.org/wiki/Scopa
-
 import sys
 import uipyqt
 import scopa
 from PyQt5.QtWidgets import *
-
-# how many
-
 
 # this is the main game loop
 """
