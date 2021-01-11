@@ -8,7 +8,6 @@ my_hand_frame_name = "Moja ręka"
 table_frame_name = "Stolik"
 this_was_scopa = "To była scopa!"
 
-# factors
 settebello_factor = 5
 card_factor = 1
 seven_factor = 5
@@ -77,7 +76,6 @@ def denars(cards):
     return denars_count
 
 
-# get the score for take
 def get_score_for_take(take, table):
     score = len(take[1]*card_factor)
     if take[0] == "07D" or settebello(take[1]):
@@ -98,7 +96,6 @@ def get_score_for_take(take, table):
     return score
 
 
-# this function selects a card to be dropped from table
 def select_card_to_be_dropped(hand, table):
     # drop the lowest
     lowest = hand[0]

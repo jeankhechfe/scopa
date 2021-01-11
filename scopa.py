@@ -10,19 +10,12 @@ no_take = -99
 
 
 class Scopa:
-    # card deck
     deck = []
-    # all hands
     hands = []
-    # all piles
     piles = []
-    # current table
     table = []
-    # how many scopas
     scopa_count = []
-    # how many points
     points = []
-    # what was the last hand played
     last_hand_played = -1
 
     def __init__(self):
@@ -30,7 +23,6 @@ class Scopa:
         # self.deck = ['03 ', '06 ', '05 ', '12 ', '01 ', '12*', '05*', '03 ', '02 ', '03 ', '11*', '05 ', '04 ', '03*', '01 ', '04*', '06*', '04 ', '02 ', '07 ', '13 ', '13*', '01*', '01 ', '07 ', '07*', '11 ', '07 ', '02 ', '12 ', '13 ', '06 ', '12 ', '11 ', '06 ', '04 ', '13 ', '02*', '05 ', '11 ']
         self.initiate_play()
 
-    # this method generates random deck
     def generate_deck(self):
         all_cards = []
         for color in colors:
