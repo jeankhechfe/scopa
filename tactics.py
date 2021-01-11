@@ -1,12 +1,12 @@
 denaro = "*"
 settebello_symbol = "07"+denaro
-lay_card_button_name = "Połóż kartę"
-claim_cards_button_name = "Zbierz karty"
-opponent_hand_frame_name = "Ręka przeciwnika"
-actions_frame_name = "Akcje"
-my_hand_frame_name = "Moja ręka"
-table_frame_name = "Stolik"
-this_was_scopa = "To była scopa!"
+lay_card_button_name = "Put Card"
+claim_cards_button_name = "Collect Cards"
+opponent_hand_frame_name = "Opponent's hand"
+actions_frame_name = "Actions"
+my_hand_frame_name = "My Hand"
+table_frame_name = "Table"
+this_was_scopa = "It was a Scopa!"
 
 # factors
 settebello_factor = 5
