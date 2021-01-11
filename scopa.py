@@ -32,21 +32,18 @@ class Scopa:
             for j in range(11, 14):
                 card = str(j) + color
                 all_cards.append(card)
-
         self.deck = []
         while len(all_cards) > 0:
             pos = random.randint(0, len(all_cards) - 1)
             random_card = all_cards[pos]
             all_cards.remove(random_card)
             self.deck.append(random_card)
-
-        print (self.deck)
+        print(self.deck)
 
     # create table, hands, piles and scopa count
     def initiate_play(self):
         for i in range(0, initial_table_size):
             self.table.append(self.deck.pop())
-
         for p in range(0, no_of_players):
             hand = []
             self.draw_hand(hand)
@@ -64,10 +61,8 @@ class Scopa:
 
     def print_game_results(self):
         print("Scopas: " + str(self.scopa_count))
-        # calculate results
         for s in range(0, no_of_players):
             pile_score = self.calculate_score(s)
-
             print("Score for hand " + str(s) + ", cards " + str(len(self.piles[s])) + " ("
                   + str(self.piles[s]) + ") is " + str(pile_score))
 
@@ -92,7 +87,6 @@ class Scopa:
             csum += len(hand)
         for pile in self.piles:
             csum += len(pile)
-
         if csum != 40:
             print("Sum is "+str(sum)+" instead of 40")
             exit(1)
@@ -108,7 +102,6 @@ class Scopa:
                 if card_value == take_sum:
                     # build list where each item is a list: card from hand, cards to be taken
                     filtered_takes.append([card, take[1]])
-
         return filtered_takes
 
     # return sum of cards in hands and deck
@@ -126,16 +119,10 @@ class Scopa:
             return not more_cards
         return False
 
-    # this function plays single hand with hand number
-    def play_hand(self, hand_number):
-        # draw hand if hand is empty
-        if len(self.hands[hand_number]) == 0:
-            self.draw_hand(self.hands[hand_number])
+    def get_potential_takes(self, hand_number):
+        return self.possible_takes(self.hands[hand_number])
 
-        # get potential takes
-        potential_takes = self.possible_takes(self.hands[hand_number])
-
-        # iterate through possible takes and check what is the best - if any
+    def get_best_take(self, hand_number, potential_takes):
         best_take_score = -1
         best_take_index = no_take
         for t in range(0, len(potential_takes)):
@@ -146,31 +133,37 @@ class Scopa:
             if current_take_score > best_take_score:
                 best_take_index = t
                 best_take_score = current_take_score
+        return best_take_index
 
-        # best_take_index will contain the index of best take
-        # if there is any take, take the best
+    def drop_a_card(self, hand_number):
+        card_to_be_dropped = tactics.select_card_to_be_dropped(self.hands[hand_number], self.table)
+        self.hands[hand_number].remove(card_to_be_dropped)
+        self.table.append(card_to_be_dropped)
+        return card_to_be_dropped
+
+    def remove_card_from_hand_and_table(self, potential_takes, hand_number, best_take_index):
+        card_from_hand = potential_takes[best_take_index][0]
+        self.hands[hand_number].remove(card_from_hand)
+        self.piles[hand_number].append(card_from_hand)
+        for card in potential_takes[best_take_index][1]:
+            self.table.remove(card)
+            self.piles[hand_number].append(card)
+        # if no cards left on the table, increase scopa count
+        if len(self.table) == 0 and not len(self.deck) == 0:
+            self.scopa_count[hand_number] += 1
+
+    # this function plays single hand with hand number
+    def play_hand(self, hand_number):
+        if len(self.hands[hand_number]) == 0:
+            self.draw_hand(self.hands[hand_number])
+        potential_takes = self.get_potential_takes(hand_number)
+        best_take_index = self.get_best_take(hand_number, potential_takes)
         if best_take_index != no_take:
-            # remove card from hand and add it to the pile
-            card_from_hand = potential_takes[best_take_index][0]
-            self.hands[hand_number].remove(card_from_hand)
-            self.piles[hand_number].append(card_from_hand)
-            # remove cards from the table and add them to the pile
-            for card in potential_takes[best_take_index][1]:
-                self.table.remove(card)
-                self.piles[hand_number].append(card)
-
-            # if no cards left on the table, increase scopa count
-            if len(self.table) == 0 and not len(self.deck) == 0:
-                self.scopa_count[hand_number] += 1
-
+            self.remove_card_from_hand_and_table(potential_takes, hand_number, best_take_index)
             return potential_takes[best_take_index]
-
         else:
             # no cards can be taken, drop a card
-            card_to_be_dropped = tactics.select_card_to_be_dropped(self.hands[hand_number], self.table)
-            self.hands[hand_number].remove(card_to_be_dropped)
-            self.table.append(card_to_be_dropped)
-            return [card_to_be_dropped, []]
+            return [self.drop_a_card(hand_number), []]
 
     # this function calculates results of a pile with given number
     def calculate_score(self, pile_number):
