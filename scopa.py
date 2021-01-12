@@ -166,24 +166,28 @@ class Scopa:
             return [self.drop_a_card(hand_number), []]
 
     def has_sevens(self, pile_number):
+        more_sevens = True
         no_of_sevens = tactics.sevens(self.piles[pile_number])
         for i in range(0, len(self.piles)):
             if i != pile_number:
-                return tactics.sevens(self.piles[i]) <= no_of_sevens
-        return True
+                more_sevens = tactics.sevens(self.piles[i]) <= no_of_sevens
+        return more_sevens
 
     def has_card(self, pile_number):
+        more_cards = True
         no_of_cards = len(self.piles[pile_number])
         for i in range(0, len(self.piles)):
             if i != pile_number:
-                return len(self.piles[i]) <= no_of_cards
-        return True
+                more_cards = len(self.piles[i]) <= no_of_cards
+        return more_cards
 
     def has_denars(self, pile_number):
+        more_denars = True
         no_of_denars = tactics.denars(self.piles[pile_number])
         for i in range(0, len(self.piles)):
             if i != pile_number:
-                return tactics.denars(self.piles[i]) <= no_of_denars
+                more_denars = tactics.denars(self.piles[i]) <= no_of_denars
+        return more_denars
 
     # this function calculates results of a pile with given number
     def calculate_score(self, pile_number):
