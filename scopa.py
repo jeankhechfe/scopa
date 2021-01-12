@@ -165,38 +165,36 @@ class Scopa:
             # no cards can be taken, drop a card
             return [self.drop_a_card(hand_number), []]
 
+    def has_sevens(self, pile_number):
+        no_of_sevens = tactics.sevens(self.piles[pile_number])
+        for i in range(0, len(self.piles)):
+            if i != pile_number:
+                return tactics.sevens(self.piles[i]) <= no_of_sevens
+        return True
+
+    def has_card(self, pile_number):
+        no_of_cards = len(self.piles[pile_number])
+        for i in range(0, len(self.piles)):
+            if i != pile_number:
+                return len(self.piles[i]) <= no_of_cards
+        return True
+
+    def has_denars(self, pile_number):
+        no_of_denars = tactics.denars(self.piles[pile_number])
+        for i in range(0, len(self.piles)):
+            if i != pile_number:
+                return tactics.denars(self.piles[i]) <= no_of_denars
+
     # this function calculates results of a pile with given number
     def calculate_score(self, pile_number):
         score = 0
-        # one point for settebello
         if tactics.settebello(self.piles[pile_number]):
             score += 1
-
-        # check if any other hand has more or the same number of sevens, cards and denars
-        no_of_sevens = tactics.sevens(self.piles[pile_number])
-        more_sevens = True
-        no_of_cards = len(self.piles[pile_number])
-        more_cards = True
-        no_of_denars = tactics.denars(self.piles[pile_number])
-        more_denars = True
-        for i in range(0, len(self.piles)):
-            if i != pile_number:
-                if tactics.sevens(self.piles[i]) >= no_of_sevens:
-                    more_sevens = False
-                if len(self.piles[i]) >= no_of_cards:
-                    more_cards = False
-                if tactics.denars(self.piles[i]) >= no_of_denars:
-                    more_denars = False
-
-        # add one point for each
-        if more_sevens:
+        if self.has_sevens(pile_number):
             score += 1
-        if more_cards:
+        if self.has_card(pile_number):
             score += 1
-        if more_denars:
+        if self.has_denars(pile_number):
             score += 1
-
-        # finally add scopa points
         score += self.scopa_count[pile_number]
-
         return score
