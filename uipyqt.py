@@ -127,58 +127,43 @@ class ScopaForm(QDialog):
                 self.draw_button(button)
 
     def draw_my_hand(self, show_as_active):
-        # show button for each card in hand
         for my_card in self.sc.hands[0]:
             my_button = QPushButton(my_card)
             my_button.setEnabled(show_as_active)
             my_button.setCheckable(show_as_active)
-            # make sure all the other are unchecked
             my_button.clicked.connect(self.disable_all_but_this)
             self.my_hand_layout.addWidget(my_button)
             self.my_hand_buttons.append(my_button)
 
-    # this method prepares the form for my move
-    def my_move(self):
+    def prepare_for_my_move(self):
         self.sc.draw_hand_if_necessary(0)
-        my_hand = self.sc.hands[0]
         self.clear_form()
-
         self.draw_opponent_hand()
         self.draw_table(False)
         self.draw_my_hand(True)
-
         self.enable_button_for_my_move()
         self.enable_actions()
 
-    # display the form for opponent move
     def opponent_move(self):
         take = self.sc.play_hand(1)
         card_from_hand = take[0]
         cards_from_table = take[1]
-
         self.clear_form()
-
         self.draw_opponent_hand(card_from_hand)
         self.draw_table(True, cards_from_table)
         self.draw_my_hand(False)
-
         if len(cards_from_table) > 0:
             self.last_claimed_hand = 1
-
         self.enable_button_for_opponent_move()
-
-        # draw both hands if are empty
         self.sc.draw_hand_if_necessary(0)
         no_more_cards = self.sc.draw_hand_if_necessary(1)
         if no_more_cards:
             self.finish_game()
 
-    # uncheck any buttons other than the one clicked
     def disable_all_but_this(self):
         for btn in self.my_hand_buttons:
             if btn is not self.sender():
                 btn.setChecked(False)
-
         self.enable_actions()
 
     # enable actions: the sum of checked button cards on the table must be equal to
@@ -205,11 +190,9 @@ class ScopaForm(QDialog):
 
         self.claim_cards_button.setEnabled(hand_card_set and sum_of_table == hand_card_value)
 
-    # again human move
     def pressed_OK(self):
-        self.my_move()
+        self.prepare_for_my_move()
 
-    # remove card from hand and add it to the table
     def pressed_lay_card(self):
         for button in self.my_hand_buttons:
             if button.isChecked():
@@ -217,8 +200,6 @@ class ScopaForm(QDialog):
                 self.sc.hands[0].remove(laid_card)
                 self.sc.table.append(laid_card)
                 break
-
-        # now it's computer's move
         self.opponent_move()
 
     # remove card from hand, cards from the table - and add them to pile

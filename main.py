@@ -27,7 +27,7 @@ def run_game_with_form():
     sc = scopa.Scopa()
     ex = uipyqt.ScopaForm(sc)
 
-    ex.my_move()
+    ex.prepare_for_my_move()
     ex.show()
 
     sys.exit(app.exec_())
