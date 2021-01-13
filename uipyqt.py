@@ -202,29 +202,33 @@ class ScopaForm(QDialog):
                 break
         self.opponent_move()
 
-    # remove card from hand, cards from the table - and add them to pile
-    def pressed_claim_cards(self):
-        for button2 in self.my_hand_buttons:
-            if button2.isChecked():
-                card_from_hand = button2.text()
+    def remove_card_from_hand(self):
+        for button in self.my_hand_buttons:
+            if button.isChecked():
+                card_from_hand = button.text()
                 self.sc.hands[0].remove(card_from_hand)
                 self.sc.piles[0].append(card_from_hand)
                 break
 
+    def remove_card_from_table(self):
         for button in self.table_buttons:
             if button.isChecked():
                 card_from_table = button.text()
                 self.sc.table.remove(card_from_table)
                 self.sc.piles[0].append(card_from_table)
 
-        # if table is empty, calculate scopa
-        if len(self.sc.table) == 0:
-            self.sc.scopa_count[0] += 1
-            qmsg = QMessageBox()
-            qmsg.setWindowTitle("Scopa")
-            qmsg.setText(tactics.this_was_scopa)
-            qmsg.exec_()
+    def calculate_score(self):
+        self.sc.scopa_count[0] += 1
+        qmsg = QMessageBox()
+        qmsg.setWindowTitle("Scopa")
+        qmsg.setText(tactics.this_was_scopa)
+        qmsg.exec_()
 
+    def pressed_claim_cards(self):
+        self.remove_card_from_hand()
+        self.remove_card_from_table()
+        if len(self.sc.table) == 0:
+            self.calculate_score()
         self.last_claimed_hand = 0
         self.opponent_move()
 
