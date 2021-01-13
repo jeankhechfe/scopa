@@ -57,61 +57,52 @@ class ScopaForm(QDialog):
         self.setLayout(self.main_layout)
         self.setWindowTitle("Scopa")
 
-    # removes all widgets from given layout
     def remove_all_widgets(self, layout):
         widget_range = reversed(range(layout.count()))
         for i in widget_range:
             widgetToRemove = layout.itemAt(i).widget()
-            button_name = widgetToRemove.text()
-            # remove it from the layout list
             layout.removeWidget(widgetToRemove)
-            # remove it from the gui
             widgetToRemove.setParent(None)
 
-    # this function clears the form from all items in the view
-    # empties all the global collections
-    # and sets all the flags to False
     def clear_form(self):
         self.remove_all_widgets(self.opponent_hand_layout)
         self.opponent_buttons = []
-
         self.remove_all_widgets(self.vbox)
         self.table_buttons = []
-
         self.remove_all_widgets(self.my_hand_layout)
         self.my_hand_buttons = []
 
-    # sets buttons "Claim cards" and "Lay card" as visible, OK as invisible
     def enable_button_for_my_move(self):
         self.claim_cards_button.setVisible(True)
         self.lay_card_button.setVisible(True)
         self.OK_button.setVisible(False)
 
-    # sets button OK as visible, "Claim cards" and "Lay card" as invisible
     def enable_button_for_opponent_move(self):
         self.claim_cards_button.setVisible(False)
         self.lay_card_button.setVisible(False)
         self.OK_button.setVisible(True)
 
-    # draw opponent hand making only the button indicated enabled and checked
+    def display_opponent_button(self, card_to_display):
+        displayed_button = QPushButton(card_to_display)
+        displayed_button.setEnabled(True)
+        displayed_button.setCheckable(True)
+        displayed_button.setChecked(True)
+        self.opponent_hand_layout.addWidget(displayed_button)
+        self.opponent_buttons.append(displayed_button)
+
+    def add_opponent_button(self):
+        opponent_button = QPushButton("XX")
+        opponent_button.setEnabled(False)
+        self.opponent_hand_layout.addWidget(opponent_button)
+        self.opponent_buttons.append(opponent_button)
+
     def draw_opponent_hand(self, card_to_display=""):
         if card_to_display != "":
-            displayed_button = QPushButton(card_to_display)
-            displayed_button.setEnabled(True)
-            displayed_button.setCheckable(True)
-            displayed_button.setChecked(True)
-            self.opponent_hand_layout.addWidget(displayed_button)
-            self.opponent_buttons.append(displayed_button)
-
+            self.display_opponent_button(card_to_display)
         for opponent_card in self.sc.hands[1]:
-            opponent_button = QPushButton("XX")
-            opponent_button.setEnabled(False)
-            # add button for each opponent hand
-            self.opponent_hand_layout.addWidget(opponent_button)
-            self.opponent_buttons.append(opponent_button)
+            self.add_opponent_button()
 
     def draw_table(self, disable_cards_not_displayed, cards_to_display=[]):
-
         # show button for each card on the table
         for table_card in self.sc.table:
             table_button = QPushButton(table_card)
@@ -183,7 +174,7 @@ class ScopaForm(QDialog):
     # uncheck any buttons other than the one clicked
     def disable_all_but_this(self):
         for btn in self.my_hand_buttons:
-            if not btn is self.sender():
+            if btn is not self.sender():
                 btn.setChecked(False)
 
         self.enable_actions()
