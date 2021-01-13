@@ -166,28 +166,29 @@ class ScopaForm(QDialog):
                 btn.setChecked(False)
         self.enable_actions()
 
-    # enable actions: the sum of checked button cards on the table must be equal to
-    # checked card from hand for claiming cards.
-    # No cards on the table and one hand card can be checked for laying card in hand
-    def enable_actions(self):
+    def get_table_selections(self):
         table = []
         table_card_set = False
         for table_btn in self.table_buttons:
             if table_btn.isChecked():
                 table.append(table_btn.text())
                 table_card_set = True
-
         sum_of_table = tactics.sum_of_cards(table)
+        return table_card_set, sum_of_table
 
+    def get_hand_selection(self):
         hand_card_set = False
         hand_card_value = -1
         for hand_btn in self.my_hand_buttons:
             if hand_btn.isChecked():
                 hand_card_set = True
                 hand_card_value = int(hand_btn.text()[:2])
+        return hand_card_set, hand_card_value
 
+    def enable_actions(self):
+        table_card_set, sum_of_table = self.get_table_selections()
+        hand_card_set, hand_card_value = self.get_hand_selection()
         self.lay_card_button.setEnabled(hand_card_set and not table_card_set)
-
         self.claim_cards_button.setEnabled(hand_card_set and sum_of_table == hand_card_value)
 
     def pressed_OK(self):
