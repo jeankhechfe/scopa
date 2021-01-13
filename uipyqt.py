@@ -102,27 +102,29 @@ class ScopaForm(QDialog):
         for opponent_card in self.sc.hands[1]:
             self.add_opponent_button()
 
-    def draw_table(self, disable_cards_not_displayed, cards_to_display=[]):
-        # show button for each card on the table
-        for table_card in self.sc.table:
-            table_button = QPushButton(table_card)
-            table_button.setGeometry(200, 150, 100, 40)
-            table_button.setCheckable(True)
-            if disable_cards_not_displayed:
-                table_button.setEnabled(False)
-            table_button.clicked.connect(self.enable_actions)
-            self.vbox.addWidget(table_button)
-            self.table_buttons.append(table_button)
+    def init_button(self, card):
+        button = QPushButton(card)
+        button.setGeometry(200, 150, 100, 40)
+        button.setCheckable(True)
+        return button
 
+    def draw_button(self, button):
+        self.vbox.addWidget(button)
+        self.table_buttons.append(button)
+
+    def draw_table(self, disable_cards_not_displayed, cards_to_display=[]):
+        for table_card in self.sc.table:
+            button = self.init_button(table_card)
+            if disable_cards_not_displayed:
+                button.setEnabled(False)
+            button.clicked.connect(self.enable_actions)
+            self.draw_button(button)
         for displayed_card in cards_to_display:
             if displayed_card != cards_to_display:
-                displayed_button = QPushButton(displayed_card)
-                displayed_button.setGeometry(200, 150, 100, 40)
-                displayed_button.setEnabled(True)
-                displayed_button.setCheckable(True)
-                displayed_button.setChecked(True)
-                self.vbox.addWidget(displayed_button)
-                self.table_buttons.append(displayed_button)
+                button = self.init_button(displayed_card)
+                button.setEnabled(True)
+                button.setChecked(True)
+                self.draw_button(button)
 
     def draw_my_hand(self, show_as_active):
         # show button for each card in hand
