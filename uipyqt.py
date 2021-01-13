@@ -232,25 +232,22 @@ class ScopaForm(QDialog):
         self.last_claimed_hand = 0
         self.opponent_move()
 
-    # if no cards in game claim remaining cards for the player who made the last claim
-    def finish_game(self):
-        for card in self.sc.table.copy():
-            self.sc.piles[self.last_claimed_hand].append(card)
-            self.sc.table.remove(card)
-
+    def print_score(self):
         my_score = self.sc.calculate_score(0)
         opponent_score = self.sc.calculate_score(1)
-
-        message = "Moje karty: " + str(len(self.sc.piles[0])) + ", w tym denarów "
-        message += str(tactics.denars(self.sc.piles[0])) + ", wynik: " + str(my_score)
-        message += "\nPrzeciwnika: " + str(len(self.sc.piles[1])) + ", w tym denarów "
-        message += str(tactics.denars(self.sc.piles[1])) + " wynik: " + str(opponent_score)
-
+        message = "My cards: " + str(len(self.sc.piles[0])) + ", including diamonds "
+        message += str(tactics.denars(self.sc.piles[0])) + ", score: " + str(my_score)
+        message += "\nOpponent: " + str(len(self.sc.piles[1])) + ", including diamonds "
+        message += str(tactics.denars(self.sc.piles[1])) + " score: " + str(opponent_score)
         msg = QMessageBox()
         msg.setText("Scopa finished")
         msg.setInformativeText(message)
         msg.setStandardButtons(QMessageBox.Ok)
         msg.exec_()
 
-        # self.sc.print_game_results()
+    def finish_game(self):
+        for card in self.sc.table.copy():
+            self.sc.piles[self.last_claimed_hand].append(card)
+            self.sc.table.remove(card)
+        self.print_score()
         sys.exit(0)
