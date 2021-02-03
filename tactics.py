@@ -96,7 +96,7 @@ def get_score_for_take(take, table):
     return score
 
 
-def select_card_to_be_dropped(hand, table):
+def select_card_to_be_dropped(hand):
     # drop the lowest
     lowest = hand[0]
     for i in range(1, len(hand)):
